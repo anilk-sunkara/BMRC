@@ -2,16 +2,10 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe"
+        PYTHON = '"C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe"'
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Install Dependencies') {
             steps {
@@ -29,7 +23,7 @@ pipeline {
                 dir('BMRC_Framework_New') {
                     bat """
                     if not exist reports mkdir reports
-                    %PYTHON% -m pytest --html=reports/report.html --self-contained-html
+                    %PYTHON% -m pytest testdata/testcases --html=reports/report.html --self-contained-html
                     """
                 }
             }
@@ -39,12 +33,15 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'BMRC_Framework_New/reports/report.html', allowEmptyArchive: true
+            junit allowEmptyResults: true, testResults: 'BMRC_Framework_New/reports/*.xml'
         }
+
         success {
-            echo 'Tests executed successfully.'
+            echo 'Build Successful'
         }
+
         failure {
-            echo 'Tests failed.'
+            echo 'Build Failed'
         }
     }
 }
