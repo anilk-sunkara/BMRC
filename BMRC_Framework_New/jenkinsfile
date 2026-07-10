@@ -18,7 +18,7 @@ pipeline {
                 dir('BMRC_Framework_New') {
                     bat '''
                     if not exist reports mkdir reports
-                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pytest tests --html=reports/report.html --self-contained-html
+                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pytest testdata/testcases --html=reports/report.html --self-contained-html
                     '''
                 }
             }
