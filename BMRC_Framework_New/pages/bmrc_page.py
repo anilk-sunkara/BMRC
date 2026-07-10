@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 from BMRC_Framework_New.pages.base_page import BasePage
-
 class Bmrc_Page(BasePage):
 
     english = (By.XPATH, "//span[.='English']")
