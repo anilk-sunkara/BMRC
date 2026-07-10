@@ -1,14 +1,25 @@
 pipeline {
     agent any
 
+    environment {
+        PYTHON = "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe"
+    }
+
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
                 dir('BMRC_Framework_New') {
-                    bat '''
-                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pip install -r requirements.txt
-                    '''
+                    bat """
+                    %PYTHON% -m pip install --upgrade pip
+                    %PYTHON% -m pip install -r requirements.txt
+                    """
                 }
             }
         }
@@ -16,10 +27,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 dir('BMRC_Framework_New') {
-                    bat '''
+                    bat """
                     if not exist reports mkdir reports
-                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pytest testdata/testcases --html=reports/report.html --self-contained-html
-                    '''
+                    %PYTHON% -m pytest --html=reports/report.html --self-contained-html
+                    """
                 }
             }
         }
@@ -28,6 +39,12 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'BMRC_Framework_New/reports/report.html', allowEmptyArchive: true
+        }
+        success {
+            echo 'Tests executed successfully.'
+        }
+        failure {
+            echo 'Tests failed.'
         }
     }
 }
