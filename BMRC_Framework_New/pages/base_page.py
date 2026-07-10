@@ -2,25 +2,29 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def select_visible_text(self, locator, text):
+class BasePage:
 
-    dropdown = WebDriverWait(self.driver,20).until(
-        EC.presence_of_element_located(locator)
-    )
+    def __init__(self, driver):
+        self.driver = driver
 
-    select = Select(dropdown)
+    def click(self, locator):
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(locator)
+        ).click()
 
-    # Try exact match first
-    try:
-        select.select_by_visible_text(text)
-        return
-    except:
-        pass
+    def select_visible_text(self, locator, text):
+        dropdown = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(locator)
+        )
 
-    # Try partial match
-    for option in select.options:
-        if text.lower() in option.text.lower():
-            option.click()
-            return
+        select = Select(dropdown)
 
-    raise Exception(f"{text} not found in dropdown")
+        for option in select.options:
+            if option.text.strip().lower() == text.strip().lower():
+                select.select_by_visible_text(option.text)
+                return
+
+        raise Exception(f"'{text}' not found in dropdown")
+
+    def select_value(self, locator, value):
+        Select(self.driver.find_element(*locator)).select_by_value(value)
