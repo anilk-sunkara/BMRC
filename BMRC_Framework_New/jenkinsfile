@@ -5,26 +5,29 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat '''
-                "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pip install -r requirements.txt
-                "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pip install pytest pytest-html
-                '''
+                dir('BMRC_Framework_New') {
+                    bat '''
+                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pip install -r requirements.txt
+                    '''
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat '''
-                if not exist reports mkdir reports
-                "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pytest tests --html=reports/report.html --self-contained-html
-                '''
+                dir('BMRC_Framework_New') {
+                    bat '''
+                    if not exist reports mkdir reports
+                    "C:/Users/Anil Kumar/AppData/Local/Programs/Python/Python313/python.exe" -m pytest tests --html=reports/report.html --self-contained-html
+                    '''
+                }
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'reports/report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'BMRC_Framework_New/reports/report.html', allowEmptyArchive: true
         }
     }
 }
